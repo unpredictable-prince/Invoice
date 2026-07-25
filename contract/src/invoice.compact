@@ -1,0 +1,43 @@
+// invoice.compact
+pragma language_version >= 0.14.0;
+
+import CompactStandardLibrary;
+
+export enum State {
+  UNPAID,
+  PAID
+}
+
+// Public ledger state
+export ledger state: State;
+export ledger amount: Uint<64>;
+export ledger description: Opaque<"string">;
+export ledger payee: Bytes<32>;
+export ledger payer: Bytes<32>;
+
+// Constructor initializes the invoice
+constructor(invAmount: Uint<64>, invDescription: Opaque<"string">) {
+  state = State.UNPAID;
+  amount = disclose(invAmount);
+  description = disclose(invDescription);
+  // Initialize payee using the creator's secret key
+  payee = disclose(publicKey(localSecretKey()));
+  // Payer is zeroed out initially
+  payer = pad(32, "");
+}
+
+// Private witness providing the user's secret key
+witness localSecretKey(): Bytes<32>;
+
+// Circuit for paying the invoice
+export circuit pay(): [] {
+  assert(state == State.UNPAID, "Invoice is already paid");
+  // Payer discloses their identity (public key derived from private key)
+  payer = disclose(publicKey(localSecretKey()));
+  state = State.PAID;
+}
+
+// Helper to derive a public key from a secret key
+export circuit publicKey(sk: Bytes<32>): Bytes<32> {
+  return persistentHash<Vector<2, Bytes<32>>>([pad(32, "invoice:pk:"), sk]);
+}

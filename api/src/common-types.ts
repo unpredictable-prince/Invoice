@@ -1,4 +1,4 @@
-// This file is part of midnightntwrk/example-bboard.
+// This file is part of midnightntwrk/example-invoice.
 // Copyright (C) Midnight Foundation
 // SPDX-License-Identifier: Apache-2.0
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -21,10 +21,10 @@
 
 import { type MidnightProviders } from '@midnight-ntwrk/midnight-js-types';
 import { type FoundContract } from '@midnight-ntwrk/midnight-js-contracts';
-import type { State, BBoardPrivateState, Contract, Witnesses } from '../../contract/src/index';
+import type { State, InvoicePrivateState, Contract, Witnesses } from '../../contract/src/index';
 
-export const bboardPrivateStateKey = 'bboardPrivateState';
-export type PrivateStateId = typeof bboardPrivateStateKey;
+export const invoicePrivateStateKey = 'invoicePrivateState';
+export type PrivateStateId = typeof invoicePrivateStateKey;
 
 /**
  * The private states consumed throughout the application.
@@ -44,9 +44,9 @@ export type PrivateStateId = typeof bboardPrivateStateKey;
  */
 export type PrivateStates = {
   /**
-   * Key used to provide the private state for {@link BBoardContract} deployments.
+   * Key used to provide the private state for {@link InvoiceContract} deployments.
    */
-  readonly bboardPrivateState: BBoardPrivateState;
+  readonly invoicePrivateState: InvoicePrivateState;
 };
 
 /**
@@ -54,46 +54,43 @@ export type PrivateStates = {
  *
  * @public
  */
-export type BBoardContract = Contract<BBoardPrivateState, Witnesses<BBoardPrivateState>>;
+export type InvoiceContract = Contract<InvoicePrivateState, Witnesses<InvoicePrivateState>>;
 
 /**
- * The keys of the circuits exported from {@link BBoardContract}.
+ * The keys of the circuits exported from {@link InvoiceContract}.
  *
  * @public
  */
-export type BBoardCircuitKeys = Exclude<keyof BBoardContract['impureCircuits'], number | symbol>;
+export type InvoiceCircuitKeys = Exclude<keyof InvoiceContract['impureCircuits'], number | symbol>;
 
 /**
- * The providers required by {@link BBoardContract}.
+ * The providers required by {@link InvoiceContract}.
  *
  * @public
  */
-export type BBoardProviders = MidnightProviders<BBoardCircuitKeys, PrivateStateId, BBoardPrivateState>;
+export type InvoiceProviders = MidnightProviders<InvoiceCircuitKeys, PrivateStateId, InvoicePrivateState>;
 
 /**
- * A {@link BBoardContract} that has been deployed to the network.
+ * A {@link InvoiceContract} that has been deployed to the network.
  *
  * @public
  */
-export type DeployedBBoardContract = FoundContract<BBoardContract>;
+export type DeployedInvoiceContract = FoundContract<InvoiceContract>;
 
 /**
  * A type that represents the derived combination of public (or ledger), and private state.
  */
-export type BBoardDerivedState = {
+export type InvoiceDerivedState = {
   readonly state: State;
-  readonly sequence: bigint;
-  readonly message: string | undefined;
+  readonly amount: bigint;
+  readonly description: string;
+  readonly payee: string;
+  readonly payer: string;
 
   /**
-   * A readonly flag that determines if the current message was posted by the current user.
-   *
-   * @remarks
-   * The `owner` property of the public (or ledger) state is the public key of the message owner, while
-   * the `secretKey` property of {@link BBoardPrivateState} is the secret key of the current user. If
-   * `owner` corresponds to the public key derived from `secretKey`, then `isOwner` is `true`.
+   * True if the current user's secret key matches the payee.
    */
-  readonly isOwner: boolean;
+  readonly isPayee: boolean;
 };
 
 // TODO: for some reason I needed to include "@midnight-ntwrk/wallet-sdk-address-format": "1.0.0-rc.1", should we bump in to rc-2 ?

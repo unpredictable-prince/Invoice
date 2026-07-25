@@ -1,4 +1,4 @@
-// This file is part of midnightntwrk/example-bboard.
+// This file is part of midnightntwrk/example-invoice.
 // Copyright (C) Midnight Foundation
 // SPDX-License-Identifier: Apache-2.0
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -25,18 +25,18 @@ import {
   Contract,
   type Ledger,
   ledger,
-} from "../managed/bboard/contract/index.js";
-import { type BBoardPrivateState, witnesses } from "../witnesses.js";
+} from "../managed/invoice/contract/index.js";
+import { type InvoicePrivateState, witnesses } from "../witnesses.js";
 
 /**
  * Serves as a testbed to exercise the contract in tests
  */
-export class BBoardSimulator {
-  readonly contract: Contract<BBoardPrivateState>;
-  circuitContext: CircuitContext<BBoardPrivateState>;
+export class InvoiceSimulator {
+  readonly contract: Contract<InvoicePrivateState>;
+  circuitContext: CircuitContext<InvoicePrivateState>;
 
   constructor(secretKey: Uint8Array) {
-    this.contract = new Contract<BBoardPrivateState>(witnesses);
+    this.contract = new Contract<InvoicePrivateState>(witnesses);
     const {
       currentPrivateState,
       currentContractState,
@@ -70,7 +70,7 @@ export class BBoardSimulator {
     return ledger(this.circuitContext.currentQueryContext.state);
   }
 
-  public getPrivateState(): BBoardPrivateState {
+  public getPrivateState(): InvoicePrivateState {
     return this.circuitContext.currentPrivateState;
   }
 
@@ -94,7 +94,7 @@ export class BBoardSimulator {
     const sequence = convertFieldToBytes(
       32,
       this.getLedger().sequence,
-      "bboard-simulator.ts",
+      "invoice-simulator.ts",
     );
     return this.contract.circuits.publicKey(
       this.circuitContext,

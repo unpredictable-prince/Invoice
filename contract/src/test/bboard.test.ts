@@ -1,4 +1,4 @@
-// This file is part of midnightntwrk/example-bboard.
+// This file is part of midnightntwrk/example-invoice.
 // Copyright (C) Midnight Foundation
 // SPDX-License-Identifier: Apache-2.0
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,25 +13,25 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { BBoardSimulator } from "./bboard-simulator.js";
+import { InvoiceSimulator } from "./invoice-simulator.js";
 import { setNetworkId } from "@midnight-ntwrk/midnight-js-network-id";
 import { describe, it, expect } from "vitest";
 import { randomBytes } from "./utils.js";
-import { State } from "../managed/bboard/contract/index.js";
+import { State } from "../managed/invoice/contract/index.js";
 
 setNetworkId("undeployed");
 
-describe("BBoard smart contract", () => {
+describe("Invoice smart contract", () => {
   it("generates initial ledger state deterministically", () => {
     const key = randomBytes(32);
-    const simulator0 = new BBoardSimulator(key);
-    const simulator1 = new BBoardSimulator(key);
+    const simulator0 = new InvoiceSimulator(key);
+    const simulator1 = new InvoiceSimulator(key);
     expect(simulator0.getLedger()).toEqual(simulator1.getLedger());
   });
 
   it("properly initializes ledger state and private state", () => {
     const key = randomBytes(32);
-    const simulator = new BBoardSimulator(key);
+    const simulator = new InvoiceSimulator(key);
     const initialLedgerState = simulator.getLedger();
     expect(initialLedgerState.sequence).toEqual(1n);
     expect(initialLedgerState.message.is_some).toEqual(false);
@@ -43,7 +43,7 @@ describe("BBoard smart contract", () => {
   });
 
   it("lets you set a message", () => {
-    const simulator = new BBoardSimulator(randomBytes(32));
+    const simulator = new InvoiceSimulator(randomBytes(32));
     const initialPrivateState = simulator.getPrivateState();
     const message =
       "Szeth-son-son-Vallano, Truthless of Shinovar, wore white on the day he was to kill a king";
@@ -60,7 +60,7 @@ describe("BBoard smart contract", () => {
   });
 
   it("lets you take down a message", () => {
-    const simulator = new BBoardSimulator(randomBytes(32));
+    const simulator = new InvoiceSimulator(randomBytes(32));
     const initialPrivateState = simulator.getPrivateState();
     const initialPublicKey = simulator.publicKey();
     const message =
@@ -80,7 +80,7 @@ describe("BBoard smart contract", () => {
   });
 
   it("lets you post another message after taking down the first", () => {
-    const simulator = new BBoardSimulator(randomBytes(32));
+    const simulator = new InvoiceSimulator(randomBytes(32));
     const initialPrivateState = simulator.getPrivateState();
     simulator.post("Life before Death.");
     simulator.takeDown();
@@ -98,7 +98,7 @@ describe("BBoard smart contract", () => {
   });
 
   it("lets a different user post a message after taking down the first", () => {
-    const simulator = new BBoardSimulator(randomBytes(32));
+    const simulator = new InvoiceSimulator(randomBytes(32));
     simulator.post("Remember, the past need not become our future as well.");
     simulator.takeDown();
     simulator.switchUser(randomBytes(32));
@@ -113,7 +113,7 @@ describe("BBoard smart contract", () => {
   });
 
   it("doesn't let the same user post twice", () => {
-    const simulator = new BBoardSimulator(randomBytes(32));
+    const simulator = new InvoiceSimulator(randomBytes(32));
     simulator.post(
       "My name is Stephen Leeds, and I am perfectly sane. My hallucinations, however, are all quite mad.",
     );
@@ -125,7 +125,7 @@ describe("BBoard smart contract", () => {
   });
 
   it("doesn't let different users post twice", () => {
-    const simulator = new BBoardSimulator(randomBytes(32));
+    const simulator = new InvoiceSimulator(randomBytes(32));
     simulator.post("Ash fell from the sky");
     simulator.switchUser(randomBytes(32));
     expect(() =>
@@ -134,7 +134,7 @@ describe("BBoard smart contract", () => {
   });
 
   it("doesn't let users take down someone elses posts", () => {
-    const simulator = new BBoardSimulator(randomBytes(32));
+    const simulator = new InvoiceSimulator(randomBytes(32));
     simulator.post(
       "Sometimes a hypocrite is nothing more than a man in the process of changing.",
     );

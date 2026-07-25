@@ -1,5 +1,5 @@
 {
-  "name": "@midnight-ntwrk/example-bboard",
+  "name": "@midnight-ntwrk/example-invoice",
   "version": "0.1.0",
   "author": "IOG",
   "license": "MIT",
@@ -8,10 +8,15 @@
   "engines": {
     "node": ">=24.11.1"
   },
+  "scripts": {
+    "build": "npm -ws run build",
+    "compact": "npm -w contract run compact",
+    "deploy": "NODE_OPTIONS=\"--max-old-space-size=12288\" npm -w contract run deploy"
+  },
   "workspaces": {
     "packages": [
-      "bboard-cli",
-      "bboard-ui",
+      "invoice-cli",
+      "invoice-ui",
       "api",
       "contract"
     ]
